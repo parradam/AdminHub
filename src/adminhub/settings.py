@@ -37,9 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'adminhub.data.projects',
-    'adminhub.data.tasks',
-    'adminhub.interfaces',
+    'adminhub.data',
+    'adminhub.interfaces.projects',
 ]
 
 MIDDLEWARE = [
