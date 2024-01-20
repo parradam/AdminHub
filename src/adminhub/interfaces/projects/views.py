@@ -1,12 +1,13 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.views import generic
 from django import shortcuts
 from adminhub.domain.projects import queries
 from adminhub.domain.projects import operations
 from . import forms
 from django.urls import reverse
+from adminhub.data import models
 
 
 class Projects(generic.ListView):
@@ -35,7 +36,7 @@ class Project(generic.DetailView):
 
 
 class CreateProject(generic.FormView):
-    form_class = forms.ProjectForm
+    form_class = forms.CreateProjectForm
     template_name = 'create-project.html'
 
     def form_valid(self, form: Any) -> HttpResponse:
@@ -50,24 +51,23 @@ class UpdateProject(generic.FormView):
     template_name = 'update-project.html'
     context_object_name = 'project_detail'
 
-    def get_object(self) -> Any:
-        project = queries.get_project(pk=self.kwargs['pk'])
-        return project
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context[self.context_object_name] = self.get_object()
-        return context
-
-    def get_initial(self) -> dict[str, Any]:
-        initial = super().get_initial()
-        project = self.get_object()
-        initial['name'] = project.name
-        initial['description'] = project.description
-        return initial
+    def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        self.project = shortcuts.get_object_or_404(
+            models.Project, pk=kwargs.get('pk'))
+        return super().setup(request, *args, **kwargs)
 
     def form_valid(self, form: Any) -> HttpResponse:
-        project = operations.update_project(pk=self.kwargs['pk'],
+        project = operations.update_project(self.project,
                                             name=form.cleaned_data['name'], description=form.cleaned_data['description'])
 
         return shortcuts.redirect(reverse('project-detail', kwargs={'pk': project.pk}))
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.project
+        return kwargs
