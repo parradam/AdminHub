@@ -2,3 +2,6 @@
 
 <h2>{{ project_detail.name }}</h2>
 <p>{{ project_detail.description }}</p>
+<a href="{% url 'update-project' pk=project_detail.pk %}">Change details</a>
+<br />
+<a href="{% url 'project-list' %}">Back to projects list</a>

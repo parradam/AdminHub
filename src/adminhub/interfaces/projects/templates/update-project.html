@@ -4,15 +4,15 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>New project</title>
+        <title>Change project: {{ project_detail.name }}</title>
     </head>
     <body>
-        <h1>New project</h1>
+        <h1>Change project: {{ project_detail.name }}</h1>
 
         <form method="post" action="">
             {% csrf_token %} {{ form.as_p }}
 
-            <button type="submit">Create project</button>
+            <button type="submit">Change project</button>
         </form>
     </body>
 </html>

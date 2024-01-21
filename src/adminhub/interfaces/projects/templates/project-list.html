@@ -1,7 +1,14 @@
 <h1>Projects</h1>
+<a href="{% url 'create-project' %}">New project</a>
+<br />
 <ul>
     {% for project in projects_list %}
-    <li>{{ project.name }} - {{ project.description }}</li>
+    <li>
+        <a href="{% url 'project-detail' pk=project.pk %}"
+            >{{ project.name }}</a
+        >
+        - {{ project.description }}
+    </li>
     {% empty %}
     <li>No projects yet.</li>
     {% endfor %}
