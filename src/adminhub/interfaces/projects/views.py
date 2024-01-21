@@ -52,8 +52,11 @@ class UpdateProject(generic.FormView):
     context_object_name = 'project_detail'
 
     def setup(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> None:
-        self.project = shortcuts.get_object_or_404(
-            models.Project, pk=kwargs.get('pk'))
+        try:
+            self.project = shortcuts.get_object_or_404(
+                models.Project, pk=kwargs.get('pk'))
+        except models.Project.DoesNotExist:
+            return http.HttpResponseNotFound('Project not found')
         return super().setup(request, *args, **kwargs)
 
     def form_valid(self, form: Any) -> http.HttpResponse:
