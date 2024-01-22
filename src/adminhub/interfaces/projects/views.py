@@ -5,7 +5,9 @@ from django import shortcuts
 from adminhub.domain.projects import queries
 from adminhub.domain.projects import operations
 from adminhub.domain.tasks import queries as task_queries
+from adminhub.domain.tasks import operations as task_operations
 from . import forms
+from . import forms as project_forms
 from django.urls import reverse
 from adminhub.data import models
 
@@ -22,8 +24,9 @@ class Projects(generic.ListView):
         return context
 
 
-class Project(generic.DetailView):
+class Project(generic.FormView):
     template_name = 'project-detail.html'
+    form_class = project_forms.CreateProjectTask
 
     def setup(self, request: http.HttpRequest, *args, **kwargs) -> None:
         super().setup(request, *args, **kwargs)
@@ -32,15 +35,26 @@ class Project(generic.DetailView):
             models.Project, pk=self.kwargs['pk'])
         self.tasks = task_queries.get_tasks_for_project(self.project)
 
-    def get_object(self) -> Any:
-        project = queries.get_project(pk=self.kwargs['pk'])
-        return project
-
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
+        create_project_task_form = project_forms.CreateProjectTask()
+
         context['project'] = self.project
         context['tasks'] = self.tasks
+        context['create_project_task_form'] = create_project_task_form
+
         return context
+
+    def form_valid(self, form) -> http.HttpResponse:
+        task = task_operations.create_task(
+            name=form.cleaned_data['name'], description=form.cleaned_data['description'], project=self.project)
+
+        success_url = self.get_success_url()
+        return shortcuts.redirect(success_url)
+
+    def get_success_url(self) -> str:
+        return reverse('project-detail', kwargs={'pk': self.project.pk})
 
 
 class CreateProject(generic.FormView):
