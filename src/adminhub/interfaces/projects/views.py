@@ -1,10 +1,10 @@
 from typing import Any
-from django.db.models.query import QuerySet
 from django import http
 from django.views import generic
 from django import shortcuts
 from adminhub.domain.projects import queries
 from adminhub.domain.projects import operations
+from adminhub.domain.tasks import queries as task_queries
 from . import forms
 from django.urls import reverse
 from adminhub.data import models
@@ -24,7 +24,13 @@ class Projects(generic.ListView):
 
 class Project(generic.DetailView):
     template_name = 'project-detail.html'
-    context_object_name = 'project_detail'
+
+    def setup(self, request: http.HttpRequest, *args, **kwargs) -> None:
+        super().setup(request, *args, **kwargs)
+
+        self.project: models.Project = shortcuts.get_object_or_404(
+            models.Project, pk=self.kwargs['pk'])
+        self.tasks = task_queries.get_tasks_for_project(self.project)
 
     def get_object(self) -> Any:
         project = queries.get_project(pk=self.kwargs['pk'])
@@ -32,6 +38,8 @@ class Project(generic.DetailView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        context['project'] = self.project
+        context['tasks'] = self.tasks
         return context
 
 

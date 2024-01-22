@@ -1,7 +1,15 @@
 <h1>Project view</h1>
 
-<h2>{{ project_detail.name }}</h2>
-<p>{{ project_detail.description }}</p>
-<a href="{% url 'update-project' pk=project_detail.pk %}">Change details</a>
+<h2>{{ project.name }}</h2>
+<p>{{ project.description }}</p>
+<a href="{% url 'update-project' pk=project.pk %}">Change details</a>
+<br />
+<ul>
+    {% for task in tasks %}
+    <li>{{task.name}}</li>
+    {% empty %}
+    <li>No tasks</li>
+    {% endfor %}
+</ul>
 <br />
 <a href="{% url 'project-list' %}">Back to projects list</a>
