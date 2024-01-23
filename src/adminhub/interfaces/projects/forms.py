@@ -18,3 +18,8 @@ class UpdateProject(forms.Form):
         if project:
             self.fields['name'].initial = project.name
             self.fields['description'].initial = project.description
+
+
+class CreateProjectTask(forms.Form):
+    name = forms.CharField(max_length=30)
+    description = forms.CharField(max_length=120)
