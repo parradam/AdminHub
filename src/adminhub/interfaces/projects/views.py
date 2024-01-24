@@ -100,3 +100,36 @@ class UpdateProject(generic.FormView):
 
     def get_success_url(self, project: models.Project) -> str:
         return reverse('project-detail', kwargs={'pk': project.pk})
+
+
+class UpdateProjectTask(generic.FormView):
+    form_class = forms.UpdateProjectTask
+    template_name = 'update-project-task.html'
+
+    def setup(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> None:
+        try:
+            self.task = shortcuts.get_object_or_404(
+                models.Task, pk=kwargs.get('pk'))
+        except models.Task.DoesNotExist:
+            return http.HttpResponseNotFound('Task not found')
+        return super().setup(request, *args, **kwargs)
+
+    def form_valid(self, form: Any) -> http.HttpResponse:
+        task = task_operations.update_task(self.task,
+                                           name=form.cleaned_data['name'], description=form.cleaned_data['description'])
+
+        success_url = self.get_success_url(task)
+        return shortcuts.redirect(success_url)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['task'] = self.task
+        return context
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs['task'] = self.task
+        return kwargs
+
+    def get_success_url(self, task: models.Task) -> str:
+        return reverse('project-detail', kwargs={'pk': task.project.pk})

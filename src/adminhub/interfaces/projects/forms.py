@@ -23,3 +23,14 @@ class UpdateProject(forms.Form):
 class CreateProjectTask(forms.Form):
     name = forms.CharField(max_length=30)
     description = forms.CharField(max_length=120)
+
+
+class UpdateProjectTask(forms.Form):
+    name = forms.CharField(max_length=30)
+    description = forms.CharField(max_length=120)
+
+    def __init__(self, task, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if task:
+            self.fields['name'].initial = task.name
+            self.fields['description'].initial = task.description
