@@ -5,3 +5,11 @@ def create_task(name: str, description: str, project: models.Project):
     task = models.Task.objects.create(
         name=name, description=description, project=project)
     return task
+
+
+def update_task(task: models.Task, name: str, description: str) -> models.Project:
+    task.name = name
+    task.description = description
+    task.save()
+
+    return task
