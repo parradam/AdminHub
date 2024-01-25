@@ -13,3 +13,7 @@ def update_task(task: models.Task, name: str, description: str) -> models.Projec
     task.save()
 
     return task
+
+
+def delete_task(pk: int) -> None:
+    models.Task.objects.filter(pk=pk).delete()

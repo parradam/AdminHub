@@ -133,3 +133,23 @@ class UpdateProjectTask(generic.FormView):
 
     def get_success_url(self, task: models.Task) -> str:
         return reverse('project-detail', kwargs={'pk': task.project.pk})
+
+
+class DeleteProjectTask(generic.View):
+
+    def setup(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> None:
+        try:
+            self.task = shortcuts.get_object_or_404(
+                models.Task, pk=kwargs.get('pk'))
+        except models.Task.DoesNotExist:
+            return http.HttpResponseNotFound('Task not found')
+        return super().setup(request, *args, **kwargs)
+
+    def post(self, request, pk):
+        task_operations.delete_task(pk)
+
+        success_url = self.get_success_url(self.task)
+        return shortcuts.redirect(success_url)
+
+    def get_success_url(self, task: models.Task) -> str:
+        return reverse('project-detail', kwargs={'pk': task.project.pk})
