@@ -102,6 +102,49 @@ class UpdateProject(generic.FormView):
         return reverse('project-detail', kwargs={'pk': project.pk})
 
 
+class ConfirmDeleteProject(generic.FormView):
+    form_class = forms.UpdateProject
+    template_name = 'confirm-delete-project.html'
+
+    def setup(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> None:
+        try:
+            self.project = shortcuts.get_object_or_404(
+                models.Project, pk=kwargs.get('pk'))
+        except models.Project.DoesNotExist:
+            return http.HttpResponseNotFound('Project not found')
+        return super().setup(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs['project'] = self.project
+        return kwargs
+
+
+class DeleteProject(generic.View):
+
+    def setup(self, request: http.HttpRequest, *args: Any, **kwargs: Any) -> None:
+        try:
+            self.project = shortcuts.get_object_or_404(
+                models.Project, pk=kwargs.get('pk'))
+        except models.Project.DoesNotExist:
+            return http.HttpResponseNotFound('Project not found')
+        return super().setup(request, *args, **kwargs)
+
+    def post(self, request, pk):
+        operations.delete_project(pk)
+
+        success_url = self.get_success_url()
+        return shortcuts.redirect(success_url)
+
+    def get_success_url(self) -> str:
+        return reverse('project-list')
+
+
 class UpdateProjectTask(generic.FormView):
     form_class = forms.UpdateProjectTask
     template_name = 'update-project-task.html'

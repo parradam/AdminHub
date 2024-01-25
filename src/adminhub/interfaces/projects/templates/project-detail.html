@@ -3,6 +3,7 @@
 <h2>{{ project.name }}</h2>
 <p>{{ project.description }}</p>
 <a href="{% url 'update-project' pk=project.pk %}">Change details</a>
+<a href="{% url 'confirm-delete-project' pk=project.pk %}">Delete project</a>
 <br />
 {% include 'partials/create-project-task.html' with form=create_project_task_form %}
 <br />
