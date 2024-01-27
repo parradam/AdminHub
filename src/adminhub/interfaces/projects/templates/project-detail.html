@@ -7,8 +7,26 @@
 <br />
 {% include 'partials/create-project-task.html' with form=create_project_task_form %}
 <br />
+
+<h2>In progress</h2>
 <ul>
-    {% for task in tasks %}
+    {% for task in tasks_in_progress %}
+    <li>{{ task.name }} - {{ task.description }} <a href="{% url 'update-project-task' pk=task.pk %}">Edit</a> | {% include 'partials/delete-project-task.html' with task=task %}</li>
+    {% empty %}
+    <li>No tasks</li>
+    {% endfor %}
+</ul>
+<h2>To do</h2>
+<ul>
+    {% for task in tasks_to_do %}
+    <li>{{ task.name }} - {{ task.description }} <a href="{% url 'update-project-task' pk=task.pk %}">Edit</a> | {% include 'partials/delete-project-task.html' with task=task %}</li>
+    {% empty %}
+    <li>No tasks</li>
+    {% endfor %}
+</ul>
+<h2>Complete</h2>
+<ul>
+    {% for task in tasks_complete %}
     <li>{{ task.name }} - {{ task.description }} <a href="{% url 'update-project-task' pk=task.pk %}">Edit</a> | {% include 'partials/delete-project-task.html' with task=task %}</li>
     {% empty %}
     <li>No tasks</li>

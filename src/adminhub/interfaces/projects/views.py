@@ -39,10 +39,16 @@ class Project(generic.FormView):
         context = super().get_context_data(**kwargs)
 
         create_project_task_form = project_forms.CreateProjectTask()
+        context['create_project_task_form'] = create_project_task_form
 
         context['project'] = self.project
-        context['tasks'] = self.tasks
-        context['create_project_task_form'] = create_project_task_form
+
+        context['tasks_in_progress'] = self.tasks.filter(
+            status=models.Task.Statuses.IN_PROGRESS)
+        context['tasks_to_do'] = self.tasks.filter(
+            status=models.Task.Statuses.TO_DO)
+        context['tasks_complete'] = self.tasks.filter(
+            status=models.Task.Statuses.COMPLETE)
 
         return context
 
@@ -159,7 +165,7 @@ class UpdateProjectTask(generic.FormView):
 
     def form_valid(self, form: Any) -> http.HttpResponse:
         task = task_operations.update_task(self.task,
-                                           name=form.cleaned_data['name'], description=form.cleaned_data['description'])
+                                           name=form.cleaned_data['name'], description=form.cleaned_data['description'], status=form.cleaned_data['status'])
 
         success_url = self.get_success_url(task)
         return shortcuts.redirect(success_url)

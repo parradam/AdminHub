@@ -7,9 +7,10 @@ def create_task(name: str, description: str, project: models.Project):
     return task
 
 
-def update_task(task: models.Task, name: str, description: str) -> models.Project:
+def update_task(task: models.Task, name: str, description: str, status: str) -> models.Project:
     task.name = name
     task.description = description
+    task.status = status
     task.save()
 
     return task

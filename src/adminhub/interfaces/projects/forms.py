@@ -28,9 +28,11 @@ class CreateProjectTask(forms.Form):
 class UpdateProjectTask(forms.Form):
     name = forms.CharField(max_length=30)
     description = forms.CharField(max_length=120)
+    status = forms.ChoiceField(choices=models.Task.Statuses.choices)
 
     def __init__(self, task, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         if task:
             self.fields['name'].initial = task.name
             self.fields['description'].initial = task.description
+            self.fields['status'].initial = task.status
