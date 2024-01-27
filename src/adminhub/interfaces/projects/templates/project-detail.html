@@ -8,7 +8,7 @@
 <br />
 <ul>
     {% for task in tasks %}
-    <li>{{ task.name }} - {{ task.description }} <a href="{% url 'update-project-task' pk=task.pk %}">Edit</a></a></li>
+    <li>{{ task.name }} - {{ task.description }} <a href="{% url 'update-project-task' pk=task.pk %}">Edit</a> | {% include 'partials/delete-project-task.html' with task=task %}</li>
     {% empty %}
     <li>No tasks</li>
     {% endfor %}

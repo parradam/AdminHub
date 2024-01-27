@@ -1,0 +1,8 @@
+<form
+    action="{% url 'delete-project-task' pk=task.pk %}"
+    method="post"
+    style="display: inline"
+>
+    {% csrf_token %}
+    <button type="submit" class="delete-button">Delete</button>
+</form>
