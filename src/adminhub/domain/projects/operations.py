@@ -12,3 +12,7 @@ def update_project(project: models.Project, name: str, description: str) -> mode
     project.save()
 
     return project
+
+
+def delete_project(pk: int) -> None:
+    models.Project.objects.filter(pk=pk).delete()
